@@ -1,0 +1,25 @@
+name: Build ROM
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: pret/agbcc
+          path: agbcc
+      - name: Instalar ferramentas
+        run: sudo apt-get update && sudo apt-get install -y build-essential binutils-arm-none-eabi libpng-dev
+      - name: Instalar agbcc
+        working-directory: agbcc
+        run: |
+          ./build.sh
+          ./install.sh ../
+      - name: Compilar
+        run: make -j$(nproc)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pokefirered
+          path: "*.gba"
